@@ -1,5 +1,8 @@
 #include <cstdio>
+#include <stdlib.h>
+#include <cstdlib>
 #include <sys/ttycom.h>
+#include <termios.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/ioctl.h>
@@ -47,16 +50,32 @@ Terminal::~Terminal() {
 }
 
 void Terminal::enableRawMode() {
+	if (tcgetattr(STDIN_FILENO, &original_terminal) == -1) 
+		std::exit(1);
+	atexit(disableRawMode);
 
+	// applies changes to terminal buffer
+	struct termios raw = original_terminal;
+	raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+	raw.c_oflag &= ~(OPOST);
+	raw.c_cflag |= (CS8);
+	raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+	raw.c_cc[VMIN] = 0;
+	raw.c_cc[VTIME] = 1;
+
+	// loads buffer into terminal 	
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
+		std::exit(1);
 }
 
 void Terminal::disableRawMode() {
-	
+	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_terminal) == -1) 
+		std::exit(1);
 }
 
 void Terminal::setCursor(const uint16_t x, const uint16_t y) {
 	char buffer[32];
-	snprintf(buffer, sizeof(buffer), "\x1b[%x;%dH", y, x);
+	snprintf(buffer, sizeof(buffer), "\x1b[%d;%dH", y, x);
 	write(STDOUT_FILENO, buffer, strlen(buffer));
 	
 	cursor_x = x;

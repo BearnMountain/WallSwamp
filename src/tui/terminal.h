@@ -12,8 +12,8 @@ public:
 	~Terminal();
 
 	void init();
-	void disableRawMode();
 	void enableRawMode();
+	static void disableRawMode();
 	
 	// GETTERS
 	inline const uint16_t getCursorX() { return cursor_x; }	
@@ -27,7 +27,7 @@ public:
 private:
 	uint16_t cursor_x, cursor_y;
 	uint16_t screen_rows, screen_cols;
-	struct termios original_terminal;
+	static struct termios original_terminal;
 };
 
 #endif
