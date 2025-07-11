@@ -49,7 +49,7 @@ char Keybind::readKey() {
 	return c;
 }
 
-void Keybind::processKeypress() {
+char Keybind::processKeypress() {
 	char c = readKey();
 
 	// checks bindings
@@ -58,4 +58,6 @@ void Keybind::processKeypress() {
 			callback();
 		}
 	}
+
+	return c;
 }

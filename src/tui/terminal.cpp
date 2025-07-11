@@ -42,7 +42,6 @@ Terminal::Terminal() {
 	screen_rows--; // last row is for the status buffer
 	cursor_x = 0;
 	cursor_y = 0;
-	
 }
 
 Terminal::~Terminal() {

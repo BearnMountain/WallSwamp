@@ -10,7 +10,7 @@ public:
 	Keybind();
 	~Keybind();
 
-	void processKeypress();
+	char processKeypress();
 	void bind(const char key, const std::function<void()> client); // insert like {'a', '\0'} or {\x1b}
 
 private:
